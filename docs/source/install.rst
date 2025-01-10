@@ -1,7 +1,7 @@
 Install
 =======
 
-The GGNN library can be installed on Linux by compiling GGNN with cmake from source or installing via pip.
+The GGNN library can be installed on Linux by compiling GGNN with cmake and then using the python package manager pip.
 
 .. _Install_Cpp_Library:
 
@@ -33,7 +33,7 @@ Build the library:
 Install Python Module
 ---------------------
 
-First, follow the steps in :ref:`Install_Cpp_Library <Install_Cpp_Library>` :
+First, follow the steps in :ref:`Install_Cpp_Library <Install_Cpp_Library>`.
 
 Then, use the package manager pip: 
 

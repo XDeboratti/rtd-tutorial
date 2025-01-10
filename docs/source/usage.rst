@@ -3,19 +3,43 @@ Usage
 
 .. _installation:
 
-Installation
+Installation C++ Library
 ------------
 
-To use Lumache, first install it using pip:
+To use ggnn, first clone the repository:
 
 .. code-block:: console
 
    git clone --recursive https://github.com/cgtuebingen/ggnn.git
+
+Navigate to the folder containing the repository:
+
+.. code-block:: console
+
    cd ggnn
 
+Build the library:
 
-Creating recipes
+.. code-block:: console
+
+   mkdir build
+   cd build
+   cmake ..
+   make
+
+
+Installation Python Module
 ----------------
+
+First, follow the steps in :ref:`Installation C++ Library`
+
+Then, use the package manager pip: 
+
+.. code-block:: console
+
+pip install ggnn
+
+
 
 To retrieve a list of random ingredients,
 you can use the ``lumache.get_random_ingredients()`` function:

@@ -7,7 +7,7 @@ The library is based on the work leading to the paper `GGNN: Graph-based GPU Nea
 Search <https://arxiv.org/abs/1912.01059>`_ by Fabian Groh, Lukas Ruppert, Patrick Wieschollek, and Hendrik P.A. Lensch.
 
 Check out the :doc:`usage` section for further information, including
-how to :ref:`install <install>`the project.
+how to :ref:`install<installation>` the project.
 
 Contents
 --------

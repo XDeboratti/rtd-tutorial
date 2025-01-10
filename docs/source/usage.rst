@@ -42,7 +42,7 @@ Then, use the package manager pip:
 
 .. code-block:: console
 
-pip install ggnn
+   pip install ggnn
 
 
 

@@ -6,7 +6,9 @@ This section explains how to use the ggnn library and the ggnn module.
 Usage in C++
 ------------
 
-Before using ggnn, some data to search in and some data to search the *k*-nearest neighbors for is needed:
+You can find all the code from this tutorial and additional example files in the :file:`src/` folder of the GGNN repository.
+
+Before using ggnn, we need to include the library and some header files from the standard library. Then, some data to search in and some data to search the *k*-nearest neighbors for is needed:
 
 .. code:: c++
 
@@ -178,3 +180,52 @@ Now, ggnn is usable:
 
 Usage in Python
 ---------------
+
+You can find all the code from this tutorial and additional example code in the :file:`python-src/ggnn/` folder of the GGNN repository.
+
+First, we have to import the module (for that purpose we use sys, you may do that as you please). Torch is only imported to generate data
+
+.. code:: python
+
+#! /usr/bin/python3
+
+import sys
+sys.path.append('path_to_build_folder')
+import GGNN
+import torch
+
+base = GGNN.FloatDataset.load('/graphics/scratch/datasets/ANN_datasets/SIFT1M/sift/sift_base.fvecs')
+query = GGNN.FloatDataset.load('/graphics/scratch/datasets/ANN_datasets/SIFT1M/sift/sift_query.fvecs')
+gt = GGNN.IntDataset.load('/graphics/scratch/datasets/ANN_datasets/SIFT1M/sift/sift_groundtruth.ivecs')
+
+k_query: int = 10
+
+evaluator = GGNN.Evaluator(base, query, gt, k_query)
+
+#base = torch.rand((100000, 128), dtype=torch.float32, device='cuda')
+#base = torch.rand((90000, 128), dtype=torch.float32, device='cuda')
+#base = torch.rand((50000, 128), dtype=torch.float32, device='cuda')
+#query = torch.rand((10000, 128), dtype=torch.float32, device='cuda')
+#base = torch.rand((2048, 4096), dtype=torch.float32, device='cuda')
+#query = torch.rand((256, 4096), dtype=torch.float32, device='cuda')
+
+ggnn = GGNN.GGNN()
+ggnn.set_base(base)
+ggnn.build(24, 0.5)
+
+indices, dists = ggnn.query(query, k_query, 0.34, 200)
+print(evaluator.evaluate_results(indices, gt))
+indices, dists = ggnn.query(query, k_query, 0.34, 400)
+print(evaluator.evaluate_results(indices, gt))
+indices, dists = ggnn.query(query, k_query, 0.41, 200)
+print(evaluator.evaluate_results(indices, gt))
+indices, dists = ggnn.query(query, k_query, 0.41, 400)
+print(evaluator.evaluate_results(indices, gt))
+indices, dists = ggnn.query(query, k_query, 0.51, 200)
+print(evaluator.evaluate_results(indices, gt))
+indices, dists = ggnn.query(query, k_query, 0.51, 400)
+print(evaluator.evaluate_results(indices, gt))
+indices, dists = ggnn.query(query, k_query, 0.64, 200)
+print(evaluator.evaluate_results(indices, gt))
+indices, dists = ggnn.query(query, k_query, 0.64, 400)
+print(evaluator.evaluate_results(indices, gt))

@@ -36,7 +36,7 @@ Build the library:
 Installation Python Module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-First, follow the steps in :ref:`Installation C++ Library`
+First, follow the steps in :ref:`Installation C++ Library <Installation C++ Library>`:
 
 Then, use the package manager pip: 
 

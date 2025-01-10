@@ -8,8 +8,11 @@ Usage in C++
 
 Before using ggnn, some data to search in and some data to search the *k*-nearest neighbors for is needed:
 
-code:
-  example: true
+.. code::
+
+   # Demonstrate a code block
+   code:
+   - example: true
 
 Usage in Python
 ---------------

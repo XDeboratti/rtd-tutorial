@@ -5,10 +5,10 @@ Installation
 
 The GGNN library can be installed on Linux by compiling GGNN with cmake from source or installing via pip.
 
+.. _Installation_Cpp_Library:
+
 Installation C++ Library
 ------------------------
-
-.. _Installation_Cpp_Library:
 
 To use ggnn, first clone the repository:
 

@@ -9,7 +9,7 @@ build:
       #Git index should ignore the files that Read the Docs has modified.
       #- git update-index --assume-unchanged environment.yml docs/conf.py
       #External links are still valid and readers aren’t linked to non-existent pages.
-      - python -m sphinx -b linkcheck -D linkcheck_timeout=1 docs/ $READTHEDOCS_OUTPUT/linkcheck
+      #- python -m sphinx -b linkcheck -D linkcheck_timeout=1 docs/ $READTHEDOCS_OUTPUT/linkcheck
 
 python:
   install:

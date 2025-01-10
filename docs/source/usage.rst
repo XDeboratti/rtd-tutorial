@@ -59,8 +59,8 @@ Then, we  have to initialize a ggnn instance and the datasets:
        Dataset<BaseT> base = Dataset<BaseT>::copy(base_data, dim, true);
        Dataset<BaseT> query = Dataset<BaseT>::copy(query_data, dim, true);
 
-Instead of copying the data, data on the host can also be referenced with ``referenceCPUData()`` and data on the GPU can be referenced with :kbd:`referenceGPUData()`.
-If the data is a dataset in fvecs or bvecs format it can be loaded with :kbd:`Dataset<BaseT>::load(:file:`path_to_file`)`.
+Instead of copying the data, data on the host can also be referenced with ``referenceCPUData()`` and data on the GPU can be referenced with ``referenceGPUData()``.
+If the data is a dataset in fvecs or bvecs format it can be loaded with ``Dataset<BaseT>::load(path_to_file)``.
 
 The base has to be passed to ggnn:
 

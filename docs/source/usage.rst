@@ -36,55 +36,7 @@ Before using ggnn, some data to search in and some data to search the *k*-neares
    for (float& x : query_data)
       x = uniform(prng);
 
-Then, we  have to initialize a ggnn instance and the datasets:
 
-.. code::
-    // data types
-    //
-    /// data type for addressing points
-    using KeyT = int32_t;
-    /// data type of the dataset (char, float)
-    using BaseT = float;
-    /// data type of computed distances
-    using ValueT = float;
-    using GGNN = GGNN<KeyT, BaseT, ValueT>;
-
-   //Initialize ggnn
-    GGNN ggnn{};
-
-    //Initilaize the datasets containing the base data and query data
-    Dataset<BaseT> base = Dataset<BaseT>::copy(base_data, dim, true);
-    Dataset<BaseT> query = Dataset<BaseT>::copy(query_data, dim, true);
-
-Instead of copying the data, data on the host can also be referenced with :kbd:`referenceCPUData()` and data on the GPU can be referenced with :kbd:`referenceGPUData()`.
-The base has to be passed to ggnn:
-
-.. code::
-
-    ggnn.setBaseReference(base);
-
-Now ggnn is ready to be used:
-
-.. code::
-
-    //buid the kNN graph, needs KBuild (the number of neighbors each node should have)
-    //typically KBuild = 24, in more complex data more neighbors might be usefull and
-    //tau_build which controls the stopping criterion for the searches during graph construction
-    //typically 0 < tau < 2, lower numbers are sufficient in most cases
-    ggnn.build(24, 0.5);
-    //call query and store indices & squared distances
-    const uint32_t KQuery = 10;
-    const auto [indices, dists] = ggnn.query(query, KQuery, 0.5);
-
-    //print the results for the first query
-    std::cout << "Result for the first query verctor: \n";
-    for(uint32_t i=0; i < KQuery; i++){
-        //std::cout << "Base Idx: ";
-        std::cout << "Distance to vector at base[";
-        std::cout.width(5);
-        std::cout << indices[i];
-        std::cout << "]: " << dists[i] << "\n";
-    }
       
 
 

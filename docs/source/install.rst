@@ -33,7 +33,7 @@ Build the library:
 Install Python Module
 ---------------------
 
-First, follow the steps in :ref:'Install_Cpp_Library' :
+First, follow the steps in :ref:`Install_Cpp_Library <Install_Cpp_Library>` :
 
 Then, use the package manager pip: 
 

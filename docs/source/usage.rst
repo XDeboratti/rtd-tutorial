@@ -1,15 +1,17 @@
 Usage
 =====
 
-The GGNN library can be installed on Linux (x86 and ARM) by compiling GGNN with cmake from source or installing via pip.
-
 Installation
 ------------
 
 .. _installation:
 
+The GGNN library can be installed on Linux by compiling GGNN with cmake from source or installing via pip.
+
 Installation C++ Library
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _InstallationC++Library:
 
 To use ggnn, first clone the repository:
 
@@ -36,7 +38,7 @@ Build the library:
 Installation Python Module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-First, follow the steps in :ref:`Installation C++ Library <Installation C++ Library>`:
+First, follow the steps in :ref:`Installation C++ Library <InstallationC++Library>`:
 
 Then, use the package manager pip: 
 

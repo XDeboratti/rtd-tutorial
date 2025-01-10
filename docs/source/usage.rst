@@ -41,6 +41,7 @@ Before using ggnn, some data to search in and some data to search the *k*-neares
 Then, we  have to initialize a ggnn instance and the datasets:
 
 .. code::
+
        // data types
        //
        /// data type for addressing points

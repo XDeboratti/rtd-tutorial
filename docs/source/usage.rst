@@ -8,7 +8,7 @@ Usage in C++
 
 Before using ggnn, some data to search in and some data to search the *k*-nearest neighbors for is needed:
 
-.. code::
+.. code:: c++
 
    #include <ggnn/base/ggnn.cuh>
    #include <array>
@@ -40,7 +40,7 @@ Before using ggnn, some data to search in and some data to search the *k*-neares
 
 Then, we  have to initialize a ggnn instance and the datasets:
 
-.. code::
+.. code:: c++
 
        // data types
        //
@@ -62,13 +62,13 @@ Then, we  have to initialize a ggnn instance and the datasets:
 Instead of copying the data, data on the host can also be referenced with :kbd:`referenceCPUData()` and data on the GPU can be referenced with :kbd:`referenceGPUData()`.
 The base has to be passed to ggnn:
 
-.. code::
+.. code:: c++
 
        ggnn.setBaseReference(base);
 
 Now, ggnn is ready to be used:
 
-.. code::
+.. code:: c++
 
        //buid the kNN graph, needs KBuild (the number of neighbors each node should have)
        //typically KBuild = 24, in more complex data more neighbors might be usefull and

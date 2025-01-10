@@ -7,12 +7,15 @@ The library is based on the work leading to the paper `GGNN: Graph-based GPU Nea
 Search <https://arxiv.org/abs/1912.01059>`_ by Fabian Groh, Lukas Ruppert, Patrick Wieschollek, and Hendrik P.A. Lensch.
 
 Check out the :doc:`install` section for further information, including
-how to :ref:`compile <Install_Cpp_Library>` the project.
+how to :ref:`compile <Install_Cpp_Library>` the project and the :doc:`usage` section for a short tutorial and code examples.
 
 Contents
 --------
 
 .. toctree::
 
+   ann-and-ggnn
    install
+   usage
    api
+   FAQ

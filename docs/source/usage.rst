@@ -1,15 +1,12 @@
-Usage
-=====
-
 Installation
-------------
+============
 
 .. _installation:
 
 The GGNN library can be installed on Linux by compiling GGNN with cmake from source or installing via pip.
 
 Installation C++ Library
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 .. _InstallationC++Library:
 
@@ -36,9 +33,9 @@ Build the library:
 
 
 Installation Python Module
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
-First, follow the steps in :ref:`Installation C++ Library <InstallationC++Library>`:
+First, follow the steps in :ref:Installation C++ Library <InstallationC++Library>:
 
 Then, use the package manager pip: 
 
@@ -46,22 +43,4 @@ Then, use the package manager pip:
 
    pip install ggnn
 
-
-
-To retrieve a list of random ingredients,
-you can use the ``lumache.get_random_ingredients()`` function:
-
-.. autofunction:: lumache.get_random_ingredients
-
-The ``kind`` parameter should be either ``"meat"``, ``"fish"``,
-or ``"veggies"``. Otherwise, :py:func:`lumache.get_random_ingredients`
-will raise an exception.
-
-.. autoexception:: lumache.InvalidKindError
-
-For example:
-
->>> import lumache
->>> lumache.get_random_ingredients()
-['shells', 'gorgonzola', 'parsley']
 

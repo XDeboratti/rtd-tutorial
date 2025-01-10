@@ -4,8 +4,8 @@ build:
   os: "ubuntu-22.04"
   tools:
     python: "3.10"
-  jobs:
-    pre_install:
+  #jobs:
+    #pre_install:
       #Git index should ignore the files that Read the Docs has modified.
       #- git update-index --assume-unchanged environment.yml docs/conf.py
       #External links are still valid and readers aren’t linked to non-existent pages.

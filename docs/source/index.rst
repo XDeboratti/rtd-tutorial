@@ -15,3 +15,7 @@ Contents
 .. toctree::
 
    ann-and-ggnn
+   install
+   usage
+   api
+   FAQ

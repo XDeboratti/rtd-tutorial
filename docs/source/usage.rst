@@ -97,8 +97,8 @@ Now, ggnn is ready to be used:
 
 ``ggnn.build(KBuild, tau_build)`` builds the kNN graph. ``KBuild`` is typically ``24`` and ``tau_build`` is typically ``0 < tau < 2``. In most cases lower numbers are sufficient. ``ggnn.query(query, KQuery, tau_query)`` executes the search. ``query`` is the data to search the *k*-nearest neighbors for. ``KQuery > 0`` can be chosen freely, depending on your needs. ``tau_query`` is again typically ``0 < tau < 2``. However, to finetune performance for your usecase you should play around with those parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples.
 
-Usage of ggnn if data is already on the GPU
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Usage with Data on the GPU
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In the following the data is assumed to be on the GPU:
 
@@ -188,7 +188,10 @@ Usage in Python
 
 You can find all the code from this tutorial and additional example code in the :file:`examples/` folder of the GGNN repository.
 
-First, we have to import the ggnn module and create the data. Additionally we let the ggnn module print the deatiled logs into the console:
+Standard Usage
+~~~~~~~~~~~~~~
+
+First, we have to import the ggnn module and create the data. Additionally we tell the ggnn module to print the deatiled logs into the console (optional):
 
 .. code:: python
 
@@ -197,7 +200,7 @@ First, we have to import the ggnn module and create the data. Additionally we le
    import ggnn
    import torch
    
-   #get detailed logs
+   #get detailed logs (optional)
    ggnn.set_log_level(4)
    
    #initialize data

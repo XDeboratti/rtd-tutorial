@@ -6,8 +6,8 @@ project = 'GGNN'
 copyright = '2025, Lukas Ruppert, Deborah Kornwolf'
 author = 'Lukas Ruppert, Deborah Kornwolf'
 
-release = '1.0'
-version = '1.0.0'
+release = '2.0'
+version = '2.0.0'
 
 # -- General configuration
 

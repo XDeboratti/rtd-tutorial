@@ -51,8 +51,4 @@ Then, use the package manager pip:
 
 .. code-block:: console
 
-   pip install . --user --break-system-packages
-
-You may leave out the 
-
-
+   pip install .

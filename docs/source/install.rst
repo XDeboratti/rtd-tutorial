@@ -26,11 +26,21 @@ and
 
 If you receive one of the following errors a missing compiler or too old version might be the reason:
 
-- missing CUDA
+- missing CUDA:
    - ``-- The CUDA compiler identification is unknown``
    - ``Failed to detect a default CUDA architecture.``
-- outdated GCC/Clang
+- outdated GCC/Clang:
    - ``GCC or Clang version 10 or higher required for C++20 support!``
+
+If you have the compilers installed, potential fixes are:
+
+- CUDA
+   - ``export PATH=/usr/local/cuda-12.6/bin/:${PATH}`` or
+   - ``export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64/:${LD_LIBRARY_PATH}``
+- GCC / Clang
+   - ``export CC=gcc-10`` or
+   - ``export CXX=g++-10`` or
+   - ``export CUDAHOSTCXX=g++-10``
 
 
 .. _Install_Cpp_Library:

@@ -15,11 +15,13 @@ Some dependencies are necessary to build the C++ library:
 You can check for those dependencies via:
 
 .. code-block:: console
+
    nvcc --version
 
 and 
 
 .. code-block:: console
+
    c++ --version
 
 If you receive one of the following errors a missing compiler or too old version might be the reason:

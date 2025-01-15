@@ -74,7 +74,7 @@ Install ggnn Python Module
 ---------------------------
 
 .. note::
-   Installation via the python package manager pip is under development.
+   Automatic installation via the python package manager pip is under development.
 
 First, follow the steps in :ref:`Install_Cpp_Library <Install_Cpp_Library>`.
 

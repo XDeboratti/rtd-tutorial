@@ -204,27 +204,37 @@ First, we have to import the ggnn module and create the data. Additionally we le
    base = torch.rand((100000, 128), dtype=torch.float32, device='cuda')
    query = torch.rand((10000, 128), dtype=torch.float32, device='cuda')
 
-Then, we have to create an instance of the GGNN class and build the graph:
+
+Then, we have to create an instance of the GGNN class and build the graph. ``build(K_Build, tau_build)`` requires ``K_Build`` and ``tau_build`` as parameters. Typically, ``0 < tau_build < 2``. However, we recommend experimenting with those parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples:
 
 .. code:: python
 
    #initialize ggnn
-   ggnn = ggnn.GGNN()
-   ggnn.set_base(base)
+   my_ggnn = ggnn.GGNN()
+   my_ggnn.set_base(base)
    
    #build the graph
-   ggnn.build(24, 0.5)
+   my_ggnn.build(64, 0.9)
 
-Now, we can query the graph with the created queries. We print the indices of the *k*-nearest neighbors for the first five queries and their squared euclidean distance:
+Now, we can query the graph with the created queries and perform a bruteforce query to compare with:
 
 .. code:: python
 
+   #set k_query
    k_query: int = 10
+
+   #run query
+   indices, dists = my_ggnn.query(query, k_query, 0.9, 1000)
    
-   #run the query and print the indices of the kNN and their squared euclidean distance
-   indices, dists = ggnn.query(query, k_query, 0.64, 400)
+   #run bruteforce query to get a groundtruth and evaluate the results of the query
+   indices_eval, dists_eval = my_ggnn.bf_query(query, k_query)
+   evaluator = ggnn.Evaluator(base, query, indices_eval, k_query)
+   print(evaluator.evaluate_results(indices))
+
+``query(query, k_query, tau_query, max_iterations)`` requires ``query`` (data to query for), ``k_query`` (the number of neighbors to search), ``tau_query`` and ``max_iterations``. To finetune performance for your usecase you should play around with those parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples. The ``Evaluator`` class holds the necessary information for evluating the results of the query. the function ``evaluate_results(indices)`` compares the results of the query (``indices``) with the results from the bruteforce query (``indices_eval``). 
+
+We can also look at the indices of the *k*-nearest neighbors for the first five queries and their squared euclidean distance:
+
+.. code:: python
+
    print('indices:', indices[:5], '\n dists:',  dists[:5], '\n')
-
-``ggnn.query(query, k_query, tau_query, max_iterations)`` requires ``query`` (data to query for), ``k_query`` (the number of neighbors to search), ``tau_query`` which is ``0 < tau_query < 2``. And ``max_iterations``. To finetune performance for your usecase you should play around with those parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples.
-
-

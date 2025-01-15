@@ -36,12 +36,23 @@ Build the library:
 Install Python Module
 ---------------------
 
+.. note::
+   Installation via the python package manager pip is under development.
+
 First, follow the steps in :ref:`Install_Cpp_Library <Install_Cpp_Library>`.
+
+Second, navigate into the ggnn folder:
+
+.. code-block:: console
+
+   cd ggnn
 
 Then, use the package manager pip: 
 
 .. code-block:: console
 
-   pip install ggnn
+   pip install . --user --break-system-packages
+
+You may leave out the 
 
 

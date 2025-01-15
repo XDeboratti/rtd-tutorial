@@ -14,6 +14,7 @@ Contents
 
 .. toctree::
 
+   Home <self>
    ann-and-ggnn
    install
    usage

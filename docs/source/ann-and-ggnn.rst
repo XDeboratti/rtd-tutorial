@@ -6,7 +6,7 @@ Short explanation of approximate nearest neighbor search and GGNN (GPU, build, s
 
 .. _Search_Parameters:
 
-Seatch Parameters
+Search Parameters
 -----------------
 
 blabla

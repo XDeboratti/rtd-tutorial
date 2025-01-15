@@ -241,3 +241,43 @@ We can also look at the indices of the *k*-nearest neighbors for the first five 
 .. code:: python
 
    print('indices:', indices[:5], '\n dists:',  dists[:5], '\n')
+
+Usage with Data on the GPU
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+this is still missing
+
+Usage Multi-GPU
+~~~~~~~~~~~~~~~
+
+For multi-gpu mode it is required to use ``set_shard_size(N_shard)``, where ``num_base_vectors = N_shard * num gpus`` has to be evenly divisible. Also the GPU ids have to be provided via ``set_gpus()``, which expects an ndarray of GPU ids.
+
+.. code:: python
+   #! /usr/bin/python3
+
+   import ggnn
+   import torch
+   import numpy as np
+   
+   k_query: int = 10
+   
+   #initialize data
+   base = torch.rand((1000000, 128), dtype=torch.float32, device='cuda')
+   query = torch.rand((10000, 128), dtype=torch.float32, device='cuda')
+   
+   #initialize ggnn and prepare multi gpu
+   my_ggnn = ggnn.GGNN()
+   my_ggnn.set_base(base)
+   my_ggnn.set_shard_size(500000)
+   my_ggnn.set_gpus(np.array([0,1], dtype=int32))
+   
+   #build the graph
+   my_ggnn.build(64, 0.9)
+   
+   #run query
+   indices, dists = my_ggnn.query(query, k_query, 0.9, 1000)
+   
+   print('indices:', indices[:5], '\n dists:',  dists[:5], '\n')
+
+.. note::
+   The ``Evaluator`` class is only available in single-gpu mode.

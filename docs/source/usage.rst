@@ -74,10 +74,7 @@ Now, ggnn is ready to be used:
 
 .. code:: c++
 
-       //buid the kNN graph, needs KBuild (the number of neighbors each node should have)
-       //typically KBuild = 24, in more complex data more neighbors might be usefull and
-       //tau_build which controls the stopping criterion for the searches during graph construction
-       //typically 0 < tau < 2, lower numbers are sufficient in most cases
+       //buid the kNN graph
        ggnn.build(24, 0.5);
        //call query and store indices & squared distances
        const uint32_t KQuery = 10;
@@ -95,8 +92,7 @@ Now, ggnn is ready to be used:
       return 0;
    }
 
-``ggnn.build(KBuild, tau_build)`` builds the kNN graph. ``KBuild`` is typically ``24`` and ``tau_build`` is typically ``0 < tau < 2``. In most cases lower numbers are sufficient. However, to finetune performance for your usecase you may play around with those two parameters. Refer to `GGNN: Graph-based GPU Nearest Neighbor
-Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about those two parameters and some examples.
+``ggnn.build(KBuild, tau_build)`` builds the kNN graph. ``KBuild`` is typically ``24`` and ``tau_build`` is typically ``0 < tau < 2``. In most cases lower numbers are sufficient. ``ggnn.query(query, KQuery, tau_query)`` executes the search. ``query`` is the data to search the *k*-nearest neighbors for. ``KQuery > 0`` can be chosen freely, depending on your needs. ``tau_query`` is again typically ``0 < tau < 2``. However, to finetune performance for your usecase you should play around with those parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples.
 
 Usage of ggnn if data is already on the GPU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

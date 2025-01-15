@@ -253,6 +253,7 @@ Usage Multi-GPU
 For multi-gpu mode it is required to use ``set_shard_size(N_shard)``, where ``num_base_vectors = N_shard * num gpus`` has to be evenly divisible. Also the GPU ids have to be provided via ``set_gpus()``, which expects an ndarray of GPU ids.
 
 .. code:: python
+
    #! /usr/bin/python3
 
    import ggnn

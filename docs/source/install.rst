@@ -6,10 +6,35 @@ The GGNN library can be installed on Linux by compiling GGNN with cmake and then
 Dependencies
 ------------
 
+Some dependencies are necessary to build the C++ library:
+
+- a C++20 compiler (GCC or Clang version 10 or higher)
+- CUDA toolkit version 12
+- nvcc
+
+You can check for those dependencies via:
+
+.. code-block:: console
+   nvcc --version
+
+and 
+
+.. code-block:: console
+   c++ --version
+
+If you receive one of the following errors a missing compiler or too old version might be the reason:
+
+- missing CUDA
+   - ``-- The CUDA compiler identification is unknown``
+   - ``Failed to detect a default CUDA architecture.``
+- outdated GCC/Clang
+   - ``GCC or Clang version 10 or higher required for C++20 support!``
+
+
 .. _Install_Cpp_Library:
 
-Install C++ Library
--------------------
+Install GGNN C++ Library
+------------------------
 
 To use ggnn, first clone the repository:
 
@@ -33,8 +58,8 @@ Build the library:
    make
 
 
-Install Python Module
----------------------
+Install ggnn Python Module
+---------------------------
 
 .. note::
    Installation via the python package manager pip is under development.

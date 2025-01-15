@@ -6,6 +6,9 @@ This section explains how to use the ggnn library and the ggnn module.
 Usage in C++
 ------------
 
+Standard Usage
+~~~~~~~~~~~~~~
+
 You can find all the code from this tutorial and additional example files in the :file:`examples/` folder of the GGNN repository.
 
 Before using ggnn, we need to include ``ggnn/base/ggnn.cuh`` from the ggnn library. The header files from the standard library are only for demonstrtaing purposes and are not required for using the library. Then, some data to search in and some data to search the *k*-nearest neighbors for is needed:
@@ -183,51 +186,45 @@ Now, ggnn is usable:
 Usage in Python
 ---------------
 
-You can find all the code from this tutorial and additional example code in the :file:`python-src/ggnn/` folder of the GGNN repository.
+You can find all the code from this tutorial and additional example code in the :file:`examples/` folder of the GGNN repository.
 
-First, we have to import the module (for that purpose we use sys, you may do that as you please). Torch is only imported to generate data
+First, we have to import the ggnn module and create the data. Additionally we let the ggnn module print the deatiled logs into the console:
 
 .. code:: python
 
    #! /usr/bin/python3
    
-   import sys
-   sys.path.append('path_to_build_folder')
-   import GGNN
+   import ggnn
    import torch
    
-   base = GGNN.FloatDataset.load('/graphics/scratch/datasets/ANN_datasets/SIFT1M/sift/sift_base.fvecs')
-   query = GGNN.FloatDataset.load('/graphics/scratch/datasets/ANN_datasets/SIFT1M/sift/sift_query.fvecs')
-   gt = GGNN.IntDataset.load('/graphics/scratch/datasets/ANN_datasets/SIFT1M/sift/sift_groundtruth.ivecs')
+   #get detailed logs
+   ggnn.set_log_level(4)
    
+   #initialize data
+   base = torch.rand((100000, 128), dtype=torch.float32, device='cuda')
+   query = torch.rand((10000, 128), dtype=torch.float32, device='cuda')
+
+Then, we have to create an instance of the GGNN class and build the graph:
+
+.. code:: python
+
+   #initialize ggnn
+   ggnn = ggnn.GGNN()
+   ggnn.set_base(base)
+   
+   #build the graph
+   ggnn.build(24, 0.5)
+
+Now, we can query the graph with the created queries. We print the indices of the *k*-nearest neighbors for the first five queries and their squared euclidean distance:
+
+.. code:: python
+
    k_query: int = 10
    
-   evaluator = GGNN.Evaluator(base, query, gt, k_query)
-   
-   #base = torch.rand((100000, 128), dtype=torch.float32, device='cuda')
-   #base = torch.rand((90000, 128), dtype=torch.float32, device='cuda')
-   #base = torch.rand((50000, 128), dtype=torch.float32, device='cuda')
-   #query = torch.rand((10000, 128), dtype=torch.float32, device='cuda')
-   #base = torch.rand((2048, 4096), dtype=torch.float32, device='cuda')
-   #query = torch.rand((256, 4096), dtype=torch.float32, device='cuda')
-   
-   ggnn = GGNN.GGNN()
-   ggnn.set_base(base)
-   ggnn.build(24, 0.5)
-   
-   indices, dists = ggnn.query(query, k_query, 0.34, 200)
-   print(evaluator.evaluate_results(indices, gt))
-   indices, dists = ggnn.query(query, k_query, 0.34, 400)
-   print(evaluator.evaluate_results(indices, gt))
-   indices, dists = ggnn.query(query, k_query, 0.41, 200)
-   print(evaluator.evaluate_results(indices, gt))
-   indices, dists = ggnn.query(query, k_query, 0.41, 400)
-   print(evaluator.evaluate_results(indices, gt))
-   indices, dists = ggnn.query(query, k_query, 0.51, 200)
-   print(evaluator.evaluate_results(indices, gt))
-   indices, dists = ggnn.query(query, k_query, 0.51, 400)
-   print(evaluator.evaluate_results(indices, gt))
-   indices, dists = ggnn.query(query, k_query, 0.64, 200)
-   print(evaluator.evaluate_results(indices, gt))
+   #run the query and print the indices of the kNN and their squared euclidean distance
    indices, dists = ggnn.query(query, k_query, 0.64, 400)
-   print(evaluator.evaluate_results(indices, gt))
+   print('indices:', indices[:5], '\n dists:',  dists[:5], '\n')
+
+``ggnn.query(query, k_query, tau_query, max_iterations)`` requires ``query`` (data to query for), ``k_query`` (the number of neighbors to search), ``tau_query`` which is ``0 < tau_query < 2``. And ``max_iterations``. To finetune performance for your usecase you should play around with those parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples.
+
+

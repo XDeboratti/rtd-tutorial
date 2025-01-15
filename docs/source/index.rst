@@ -1,4 +1,4 @@
-ggnn Documentation
+GGNN Documentation
 ===================================
 
 The library ggnn offers an efficient algorithm for approximate nearest neighbor search (ANN) utilizing the massive parallelism offered by GPUs. 

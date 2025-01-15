@@ -6,9 +6,9 @@ This section explains how to use the ggnn library and the ggnn module.
 Usage in C++
 ------------
 
-You can find all the code from this tutorial and additional example files in the :file:`src/` folder of the GGNN repository.
+You can find all the code from this tutorial and additional example files in the :file:`examples/` folder of the GGNN repository.
 
-Before using ggnn, we need to include the library and some header files from the standard library. Then, some data to search in and some data to search the *k*-nearest neighbors for is needed:
+Before using ggnn, we need to include ``ggnn/base/ggnn.cuh`` from the ggnn library. The header files from the standard library are only for demonstrtaing purposes and are not required for using the library. Then, some data to search in and some data to search the *k*-nearest neighbors for is needed:
 
 .. code:: c++
 
@@ -94,6 +94,12 @@ Now, ggnn is ready to be used:
        }
       return 0;
    }
+
+``ggnn.build(KBuild, tau_build)`` builds the kNN graph. ``KBuild`` is typically ``24`` and ``tau_build`` is typically ``0 < tau < 2``. In most cases lower numbers are sufficient. However, to finetune performance for your usecase you may play around with those two parameters. Refer to `GGNN: Graph-based GPU Nearest Neighbor
+Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about those two parameters and some examples.
+
+Usage of ggnn if data is already on the GPU
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In the following the data is assumed to be on the GPU:
 

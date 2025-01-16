@@ -1,7 +1,7 @@
-ANN and GGNN
-============
+Approximate Nearest Neighbor Search and GGNN
+============================================
 
-Short explanation of approximate nearest neighbor search and GGNN (GPU, build, search)
+Approximate nearest neighbor (ANN) search is of great importance in various fields including databases, data mining, and machine learning. ANN is derived from *k*-nearest-neighbor search.
 
 
 .. _Search_Parameters:

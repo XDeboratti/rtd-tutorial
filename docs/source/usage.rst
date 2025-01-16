@@ -180,6 +180,89 @@ Now, ggnn is usable:
       return 0;
    }
 
+Usage Datasets (e.g. SIFT1M)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We can also query for benchmark datasets like `SIFT1M, SIFT1B,...<http://corpus-texmex.irisa.fr/>`. We just need to include some extra headers for parsing information from the command line. Additionally ``getTotalSystemMemory()`` helps to manage the memory of our machine properly, especially if we deal with large datasets.
+
+.. code:: c++
+
+   #include <gflags/gflags.h>
+   #include <glog/logging.h>
+   #include <cstdint>
+   #include <cstddef>
+   #include <cstdlib>
+   
+   #include <filesystem>
+   
+   #include <iostream>
+   #include <vector>
+   #include <sstream>
+   #include <iterator>
+   #include <limits>
+   #include <string>
+   
+   #include <ggnn/base/ggnn.cuh>
+   #include <ggnn/base/eval.h>
+   // only needed for getTotalSystemMemory()
+   #include <unistd.h>
+   
+   using namespace ggnn;
+   
+   DEFINE_string(base, "", "path to file with base vectors");
+   DEFINE_string(query, "", "path to file with query vectors");
+   DEFINE_string(gt, "","path to file with groundtruth vectors");
+   DEFINE_string(graph_dir, "", "directory to store and load ggnn graph files.");
+   DEFINE_double(tau, 0.5, "Parameter tau");
+   DEFINE_uint32(refinement_iterations, 2, "Number of refinement iterations");
+   DEFINE_uint32(k_build, 24, "Number of neighbors for graph construction");
+   DEFINE_uint32(k_query, 10, "Number of neighbors to query for");
+   DEFINE_string(measure, "euclidean", "distance measure (euclidean or cosine)");
+   DEFINE_uint32(shard_size, 0, "Number of vectors per shard");
+   DEFINE_uint32(subset, 0, "Number of base vectors to use");
+   DEFINE_string(gpu_ids, "0", "GPU id");
+   DEFINE_bool(grid_search, false, "Perform queries for a wide range of parameters.");
+
+   size_t getTotalSystemMemory()
+   {
+       size_t pages = sysconf(_SC_PHYS_PAGES);
+       size_t page_size  = sysconf(_SC_PAGE_SIZE);
+       return pages * page_size;
+   }
+
+   int main(int argc, char* argv[]) {
+     google::InitGoogleLogging(argv[0]);
+     google::LogToStderr();
+     google::InstallFailureSignalHandler();
+   
+     gflags::SetUsageMessage(
+         "GGNN: Graph-based GPU Nearest Neighbor Search\n"
+         "by Fabian Groh, Lukas Ruppert, Patrick Wieschollek, Hendrik P.A. "
+         "Lensch\n"
+         "(c) 2020 Computer Graphics University of Tuebingen");
+     gflags::SetVersionString("1.0.0");
+     gflags::ParseCommandLineFlags(&argc, &argv, true);
+   
+     LOG(INFO) << "Reading files";
+     CHECK(std::filesystem::exists(FLAGS_base))
+         << "File for base vectors has to exist";
+     CHECK(std::filesystem::exists(FLAGS_query))
+         << "File for query vectors has to exist";
+     CHECK(std::filesystem::exists(FLAGS_gt))
+         << "File for groundtruth vectors has to exist";
+   
+     CHECK_GE(FLAGS_tau, 0) << "Tau has to be bigger or equal 0.";
+     CHECK_GE(FLAGS_refinement_iterations, 0)
+         << "The number of refinement iterations has to be non-negative.";
+
+Then, we define the data types of the addresses, the dataset and the distances. Also, we make using the templates in a convenient manner. Also we read out the distance measure and the gpu_ids.
+
+
+
+
+Usage Multi-GPU
+~~~~~~~~~~~~~~~
+
 
 
 

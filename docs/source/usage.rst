@@ -204,8 +204,8 @@ First, we have to import the ggnn module and create the data. Additionally we te
    ggnn.set_log_level(4)
    
    #initialize data
-   base = torch.rand((100000, 128), dtype=torch.float32, device='cuda')
-   query = torch.rand((10000, 128), dtype=torch.float32, device='cuda')
+   base = torch.rand((100000, 128), dtype=torch.float32, device='cpu')
+   query = torch.rand((10000, 128), dtype=torch.float32, device='cpu')
 
 
 Then, we have to create an instance of the GGNN class and build the graph. ``build(K_Build, tau_build)`` requires ``K_Build`` and ``tau_build`` as parameters. Typically, ``0 < tau_build < 2``. However, we recommend experimenting with those parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples:
@@ -245,7 +245,14 @@ We can also look at the indices of the *k*-nearest neighbors for the first five 
 Usage with Data on the GPU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-this is still missing
+This  works just like with data on the host, you just have to change the device of your torch tensors to ``device='cuda'`` and potentially add the respective gpu index. 
+
+.. code:: python
+
+   #initialize data
+   base = torch.rand((100000, 128), dtype=torch.float32, device='cuda')
+   query = torch.rand((10000, 128), dtype=torch.float32, device='cuda')
+
 
 Usage Multi-GPU
 ~~~~~~~~~~~~~~~

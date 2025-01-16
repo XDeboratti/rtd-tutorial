@@ -20,3 +20,14 @@ Contents
    usage
    api
    FAQ
+
+Capabilities and Limitations
+----------------------------
+
+The ggnn library supports...
+- data with up to 4096 dimensions
+- building graphs with up to 512 nearest neighbors
+
+..
+   - TOODO: searching for up to blabla nearest neighbors
+

@@ -67,7 +67,7 @@ Build the library:
    mkdir build
    cd build
    cmake ..
-   make
+   make -j4
 
 
 Install ggnn Python Module

@@ -25,6 +25,7 @@ Capabilities and Limitations
 ----------------------------
 
 The ggnn library supports...
+
 - data with up to 4096 dimensions
 - building graphs with up to 512 nearest neighbors
 

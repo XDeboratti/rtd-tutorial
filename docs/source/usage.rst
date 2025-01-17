@@ -322,6 +322,31 @@ Now, ggnn is usable:
       return 0;
    }
 
+Usage Multi-GPU
+~~~~~~~~~~~~~~~
+
+To work on multiple GPUs, we need to pass a ``std::vector<int>`` of GPU ids. Additionally, we need to set ``shard_size``. If we use multiple gpus, a gpu deals with one part of the dataset at once and the parts are being swapped out. Therefore, the size of the base dataset has to be evenly divisible by ``shard``size. The code could look as follows:
+
+.. code:: c++
+
+   //initialize ggnn
+   GGNN ggnn;
+   
+   const size_t total_memory = getTotalSystemMemory();
+   // guess the available memory (assume 1/8 used elsewhere, subtract dataset)
+   const size_t available_memory = total_memory-total_memory/8-base.size_bytes();
+   ggnn.setCPUMemoryLimit(available_memory);
+   
+   ggnn.setWorkingDirectory(FLAGS_graph_dir);
+   ggnn.setBaseReference(base);  
+   
+   //only necessary in multi-gpu mode
+   std::vector<int> gpus = {0,1};
+   const uint32_t shard_size = 1000000
+   ggnn.setGPUs(gpus);
+   ggnn.setShardSize(shard_size);
+
+
 Usage Datasets (e.g. SIFT1M)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -397,13 +422,141 @@ We can also query for benchmark datasets like `SIFT1M, SIFT1B,...<http://corpus-
      CHECK_GE(FLAGS_refinement_iterations, 0)
          << "The number of refinement iterations has to be non-negative.";
 
-Then, we define the data types of the addresses, the dataset and the distances. Also, we make using the templates in a convenient manner. Also we read out the distance measure and the gpu_ids.
+Then, we configure the data types we need, read the distance measure and the gpus. For SIFT1B for example, the ``using BaseT = float;`` has to be replaced by ``using BaseT = char;``: 
+
+.. code:: c++
+
+     // data types
+     //
+     /// data type for addressing points (needs to be able to represent N)
+     using KeyT = int32_t;
+     /// data type of the dataset (e.g., char, int, float)
+     using BaseT = float;
+     /// data type of computed distances
+     using ValueT = float;
+   
+     using GGNN = GGNN<KeyT, ValueT, BaseT>;
+     using Results = ggnn::Results<KeyT, ValueT>;
+     using Evaluator = ggnn::Evaluator<KeyT, ValueT, BaseT>;
+   
+     /// distance measure (Euclidean or Cosine)
+     const DistanceMeasure measure = [](){
+       if(FLAGS_measure == "euclidean"){
+         return Euclidean;
+       }
+       else if (FLAGS_measure == "cosine") {
+         return Cosine;  
+       }
+       LOG(FATAL) << "invalid measure: " << FLAGS_measure;
+     }();
+   
+     //vector of gpu ids
+     std::istringstream iss(FLAGS_gpu_ids);
+     std::vector<std::string> results(std::istream_iterator<std::string>{iss},
+                                      std::istream_iterator<std::string>());
+   
+     std::vector<int> gpus;
+     for (auto&& r : results) {
+       int gpu_id = std::atoi(r.c_str());
+       gpus.push_back(gpu_id);
+     }
+
+Then, we can load the datasets:
+
+.. code:: c++
+
+   //base & query datasets
+   Dataset<BaseT> base = Dataset<BaseT>::load(FLAGS_base, 0, FLAGS_subset ? FLAGS_subset : std::numeric_limits<uint32_t>::max(), true);
+   Dataset<BaseT> query = Dataset<BaseT>::load(FLAGS_query, 0, std::numeric_limits<uint32_t>::max(), true);
+
+And can initialize ggnn:
+
+.. code:: c++
+
+   //initialize ggnn
+   GGNN ggnn;
+   
+   const size_t total_memory = getTotalSystemMemory();
+   // guess the available memory (assume 1/8 used elsewhere, subtract dataset)
+   const size_t available_memory = total_memory-total_memory/8-base.size_bytes();
+   ggnn.setCPUMemoryLimit(available_memory);
+   
+   ggnn.setWorkingDirectory(FLAGS_graph_dir);
+   ggnn.setBaseReference(base);
+
+We load the graph if it was built before, else we build and store it:
+
+   //build the graph
+   if (!FLAGS_graph_dir.empty() && std::filesystem::is_regular_file(std::filesystem::path{FLAGS_graph_dir} / "part_0.ggnn")) {
+      ggnn.load(FLAGS_k_build);
+   }
+   else {
+    ggnn.build(FLAGS_k_build, static_cast<float>(FLAGS_tau), FLAGS_refinement_iterations, measure);
+   
+    if (!FLAGS_graph_dir.empty()) {
+      ggnn.store();
+    }
+   }
+
+We obtain the groundtruth:
 
 
+.. code:: c++
+   
+   //load or compute groundtruth
+   const bool loadGT = std::filesystem::is_regular_file(FLAGS_gt);
+   Dataset<KeyT> gt = loadGT ? Dataset<KeyT>::load(FLAGS_gt) : Dataset<KeyT>{};
+   
+   if (!gt.data()) {
+      gt = ggnn.bfQuery(query).ids;
+      if (!FLAGS_gt.empty()) {
+          LOG(INFO) << "exporting brute-forced ground truth data.";
+          gt.store(FLAGS_gt);
+      }
+   }
+   
+   Evaluator eval {base, query, gt, FLAGS_k_query, measure};
+
+Finally, we can perform the query:
 
 
-Usage Multi-GPU
-~~~~~~~~~~~~~~~
-
-
-
+.. code:: c++
+   
+   //query
+   auto query_function = [&ggnn, &eval, &query, measure](const float tau_query) {
+    Results results;
+    LOG(INFO) << "--";
+    LOG(INFO) << "Query with tau_query " << tau_query;
+    // faster for C@1 = 99%
+    LOG(INFO) << "fast query (good for C@1)";
+    results = ggnn.query(query, FLAGS_k_query, tau_query, 200, measure);
+    LOG(INFO) << eval.evaluateResults(results.ids);
+    // better for C@10 > 99%
+    LOG(INFO) << "regular query (good for C@10)";
+    results = ggnn.query(query, FLAGS_k_query, tau_query, 400, measure);
+    LOG(INFO) << eval.evaluateResults(results.ids);
+    // expensive, can get to 99.99% C@10
+    // ggnn.queryLayer<KQuery, 2000, 2048, 256>();
+   };
+   
+   if (FLAGS_grid_search) {
+    LOG(INFO) << "--";
+    LOG(INFO) << "grid-search:";
+    for (int i = 0; i < 70; ++i)
+      query_function(static_cast<float>(i) * 0.01f);
+    for (int i = 7; i <= 20; ++i)
+      query_function(static_cast<float>(i) * 0.1f);
+   } else {  // by default, just execute a few queries
+    LOG(INFO) << "--";
+    LOG(INFO) << "90, 95, 99% R@1, 99% C@10 (using -tau 0.5 "
+                 "-refinement_iterations 2):";
+    query_function(0.34f);
+    query_function(0.41f);
+    query_function(0.51f);
+    query_function(0.64f);
+   }
+   
+   VLOG(1) << "done!";
+   gflags::ShutDownCommandLineFlags();
+   return 0;
+   }

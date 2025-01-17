@@ -39,10 +39,11 @@ The next step is to create an instance of the GGNN class from the ggnn module. T
    my_ggnn.set_base(base)
    
    #build the graph
-   my_ggnn.build(k_build=64, tau_build=0.9)
+   my_ggnn.build(k_build=64, tau_build=0.9, measure=ggnn.DistanceMeasure.Euclidean)
 
-The parameters of the ``build(k_build, tau_build)`` fuction need some explanation. ``k_build`` describes the number of outgoing edges per node in the graph, the larger ``k_build`` the longer the build time and the query. ``tau_build`` influences the stopping criterion during the creation of the graph, the larger the ``tau_build``, the longer the build time. Typically, :math:`0 < tau\_build < 2` is enough to get good results during search. 
+The parameters of the ``build(k_build, tau_build, measure)`` fuction need some explanation. ``k_build`` describes the number of outgoing edges per node in the graph, the larger ``k_build`` the longer the build time and the query. ``tau_build`` influences the stopping criterion during the creation of the graph, the larger the ``tau_build``, the longer the build time. Typically, :math:`0 < tau\_build < 2` is enough to get good results during search. 
 It is recommended to experiment with these parameters to get the best possible trade-off between build time and accuracy out of the search. See the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`search parameters <Search_Parameters>` section for more information on parameters and some examples.
+``measure`` is the distance measure to compare the distances of the vectors. The ggnn module supports cosine and euclidean (L2) distance, euclidean distance is the default, so passing this parameter is optional.
 
 Now, the approximate nearest neighbor search can be performed. In this example, a groundtruth is computed via a bruteforce query and the result of the ANN search is evaluated:
 
@@ -51,13 +52,24 @@ Now, the approximate nearest neighbor search can be performed. In this example, 
    #run query
    k_query: int = 10
    
-   indices, dists = my_ggnn.query(query, k_query=k_query, tau_query=0.9, max_iterations=1000)
+   indices, dists = my_ggnn.query(query, k_query=k_query, tau_query=0.9, max_iterations=1000, measure=ggnn.DistanceMeasure.Euclidean)
    
    
    #run bruteforce query to get a groundtruth and evaluate the results of the query
-   gt_indices, gt_dists = my_ggnn.bf_query(query, k_gt=k_query)
+   gt_indices, gt_dists = my_ggnn.bf_query(query, k_gt=k_query, measure=ggnn.DistanceMeasure.Euclidean)
    evaluator = ggnn.Evaluator(base, query, gt_indices, k_query=k_query)
    print(evaluator.evaluate_results(indices))
+
+First, the parameters of ``query(query, k_query, tau_query, max_iterations, measure)`` are explained:
+- ``query`` are all the vectors, to search the *k*NN for.
+- ``k_query`` tells the search algorithm how many neighbors it should return per query vector. Generally, the higher ``k_query``, the longer the search. The ggnn module supports up to 6000 neighbors, but it is recommended to search only for 1-1000 neighbors.
+- ``tau_query`` and ``max_iterations`` determine the stopping criterion. For both parameters it holds that the larger the parameter, the longer the search. Typically, :math:`0 < tau\_query < 2` and :math:`0 < max\_iterations < 2000` is enough to get good results during search.
+- ``measure`` is the distance measure that is used to compute the distances between vectors. ``Euclidean`` is the default, so this parameter is optional. To set cosine similarity you can pass ``measure=ggnn.DistanceMeasure.Cosine`` as parameter. 
+
+.. caution::
+
+   The distance measure for building, querying and computing the groundtruth should be the same.
+
 
 
 ``query(query, k_query, tau_query, max_iterations)`` takes ``query`` (the data to query for), ``k_query`` (the number of neighbors to search), ``tau_query`` and ``max_iterations``. To fine-tune performance for your application you should play around with these parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples. The ``Evaluator`` class holds the necessary information for evluating the results of the query. the function ``evaluate_results(indices)`` compares the results of the query (``indices``) with the results from the bruteforce query (``indices_eval``). 

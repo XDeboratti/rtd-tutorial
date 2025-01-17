@@ -29,7 +29,7 @@ The ggnn library supports...
 - building graphs with up to 512 edges per node
 - searching for up to 6000 nearest neighbors
 
-..caution::
+.. caution::
 
    It is not recommended to search for ``k_query = 6000`` neighbors, we recommend to search for ``k_query <= 1000``.
 

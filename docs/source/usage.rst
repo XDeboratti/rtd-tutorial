@@ -87,7 +87,7 @@ This works just like with data on the host, but the device of the torch tensors 
 
 .. code:: python
 
-   #initialize data
+   #create data
    base = torch.rand((100000, 128), dtype=torch.float32, device='cuda')
    query = torch.rand((10000, 128), dtype=torch.float32, device='cuda')
 
@@ -103,7 +103,7 @@ This works just like with data on the host, but the device of the torch tensors 
 Usage Multi-GPU
 ~~~~~~~~~~~~~~~
 
-For multi-gpu mode it is required to use ``set_shard_size(N_shard)``, where ``N_shard`` describes the number of base vectors that should be processed at once. Also the GPU ids have to be provided via ``set_gpus()``, which expects a list of GPU ids.
+For multi-gpu mode it is required to use ``set_shard_size(n_shard)``, where ``n_shard`` describes the number of base vectors that should be processed at once. Also the GPU ids have to be provided via ``set_gpus(gpu_ids)``, which expects a list of GPU ids. 
 
 .. code:: python
    
@@ -112,28 +112,28 @@ For multi-gpu mode it is required to use ``set_shard_size(N_shard)``, where ``N_
    import ggnn
    import torch
    
-   k_query: int = 10
-   
-   #initialize data
+   #create data
    base = torch.rand((1000000, 128), dtype=torch.float32, device='cpu')
    query = torch.rand((10000, 128), dtype=torch.float32, device='cpu')
    
    #initialize ggnn and prepare multi gpu
    my_ggnn = ggnn.GGNN()
    my_ggnn.set_base(base)
-   my_ggnn.set_shard_size(125000)
-   my_ggnn.set_gpus([0,1])
+   my_ggnn.set_shard_size(n_shard=125000)
+   my_ggnn.set_gpus(gpu_ids=[0,1])
    
    #build the graph
-   my_ggnn.build(64, 0.9)
+   my_ggnn.build(k_build=64, tau_build=0.9)
    
    #run query
-   indices, dists = my_ggnn.query(query, k_query, 0.9, 1000)
+   k_query: int = 10
+   
+   indices, dists = my_ggnn.query(query, k_query=k_query, tau_query=0.9, max_iterations=1000)
    
    print('indices:', indices[:5], '\n squared dists:',  dists[:5], '\n')
 
 .. note::
-   The ``Evaluator`` class is only available in single-gpu mode.
+   The ``Evaluator`` class is only available in single-gpu mode. 
 
 Usage of Datasets (e.g. SIFT1M)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

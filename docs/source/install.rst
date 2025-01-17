@@ -1,18 +1,16 @@
 Install
 =======
 
-The GGNN library can be installed on Linux by compiling GGNN with cmake and then using the python package manager pip.
-
 Dependencies
 ------------
 
-Some dependencies are necessary to build the C++ library:
+The following dependencies are required to install the library:
 
 - a C++20 compiler (GCC or Clang version 10 or higher)
-- CUDA toolkit version 12
-- nvcc
+- CUDA toolkit version 12 or higher
+- the Nvidia CUDA compiler nvcc
 
-You can check for those dependencies via:
+The existence and version of these dependencies can be checked with:
 
 .. code-block:: console
 
@@ -24,7 +22,7 @@ and
 
    c++ --version
 
-If you receive one of the following errors a missing compiler or too old version might be the reason:
+The reason for one of the following errors, may be a missing compiler or a too old version:
 
 - missing CUDA:
    - ``-- The CUDA compiler identification is unknown``
@@ -32,7 +30,7 @@ If you receive one of the following errors a missing compiler or too old version
 - outdated GCC/Clang:
    - ``GCC or Clang version 10 or higher required for C++20 support!``
 
-If you have the compilers installed, potential fixes are:
+If the compilers are installed, here are possible fixes:
 
 - CUDA
    - ``export PATH=/usr/local/cuda-12.6/bin/:${PATH}`` or
@@ -43,7 +41,31 @@ If you have the compilers installed, potential fixes are:
    - ``export CUDAHOSTCXX=g++-10``
 
 
-.. _Install_Cpp_Library:
+Install ggnn Python Module
+---------------------------
+
+To install ggnn, first the repository has to be cloned:
+
+.. code-block:: console
+
+   git clone https://github.com/cgtuebingen/ggnn.git
+
+The easiest way to install if from the folder containing the repository:
+
+.. code-block:: console
+
+   cd ggnn
+
+The ggnn library can then be installed using the package manager pip: 
+
+.. code-block:: console
+
+   pip install .
+
+
+.. note::
+   Automatic installation via ``pip install ggnn`` is under development.
+
 
 Install GGNN C++ Library
 ------------------------
@@ -52,7 +74,7 @@ To use ggnn, first clone the repository:
 
 .. code-block:: console
 
-   git clone --recursive https://github.com/cgtuebingen/ggnn.git
+   git clone https://github.com/cgtuebingen/ggnn.git
 
 Navigate to the folder containing the repository:
 
@@ -70,22 +92,4 @@ Build the library:
    make -j4
 
 
-Install ggnn Python Module
----------------------------
 
-.. note::
-   Automatic installation via the python package manager pip is under development.
-
-First, follow the steps in :ref:`Install_Cpp_Library <Install_Cpp_Library>`.
-
-Second, navigate into the ggnn folder:
-
-.. code-block:: console
-
-   cd ggnn
-
-Then, use the package manager pip: 
-
-.. code-block:: console
-
-   pip install .

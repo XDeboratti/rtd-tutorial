@@ -132,6 +132,10 @@ For multi-gpu mode it is required to use ``set_shard_size(n_shard)``, where ``n_
    
    print('indices:', indices[:5], '\n squared dists:',  dists[:5], '\n')
 
+.. caution::
+   When using multiple GPUs for the search, data has to be copied through the cpu before it can be spreaded on multiple GPUs.
+   Also returning the results is only possible on the host side when using multiple GPUs (for now).
+
 .. note::
    The ``Evaluator`` class is only available in single-gpu mode. 
 

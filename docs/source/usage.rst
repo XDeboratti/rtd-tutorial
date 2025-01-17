@@ -486,6 +486,8 @@ And can initialize ggnn:
 
 We load the graph if it was built before, else we build and store it:
 
+.. code:: c++
+   
    //build the graph
    if (!FLAGS_graph_dir.empty() && std::filesystem::is_regular_file(std::filesystem::path{FLAGS_graph_dir} / "part_0.ggnn")) {
       ggnn.load(FLAGS_k_build);

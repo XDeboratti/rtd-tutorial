@@ -60,22 +60,20 @@ Now, the approximate nearest neighbor search can be performed. In this example, 
    evaluator = ggnn.Evaluator(base, query, gt_indices, k_query=k_query)
    print(evaluator.evaluate_results(indices))
 
-First, the parameters of ``query(query, k_query, tau_query, max_iterations, measure)`` are explained:
+The parameters of ``query(query, k_query, tau_query, max_iterations, measure)`` are:
 
 - ``query`` are all the vectors, to search the *k*-NN for.
 - ``k_query`` tells the search algorithm how many neighbors it should return per query vector. Generally, the higher ``k_query``, the longer the search. The ggnn module supports up to 6000 neighbors, but it is recommended to search only for 1-1000 neighbors.
 - ``tau_query`` and ``max_iterations`` determine the stopping criterion. For both parameters it holds that the larger the parameter, the longer the search. Typically, :math:`0 < tau\_query < 2` and :math:`0 < max\_iterations < 2000` is enough to get good results during search.
 - ``measure`` is the distance measure that is used to compute the distances between vectors. ``Euclidean`` is the default, so this parameter is optional. To set cosine similarity you can pass ``measure=ggnn.DistanceMeasure.Cosine`` as parameter. 
 
+For computing a groundtruth, we need  to pass ``k_gt`` which should be the same as ``k_query`` if we want to compare properly.
+
 .. caution::
 
    The distance measure for building, querying and computing the groundtruth should be the same.
 
-
-
-``query(query, k_query, tau_query, max_iterations)`` takes ``query`` (the data to query for), ``k_query`` (the number of neighbors to search), ``tau_query`` and ``max_iterations``. To fine-tune performance for your application you should play around with these parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples. The ``Evaluator`` class holds the necessary information for evluating the results of the query. the function ``evaluate_results(indices)`` compares the results of the query (``indices``) with the results from the bruteforce query (``indices_eval``). 
-
-We can also look at the indices of the *k*-nearest neighbors for the first five queries and their squared euclidean distance:
+After evaluating the example program prints the indices of the *k*-nearest neighbors for the first five queries and their squared euclidean distances:
 
 .. code:: python
 

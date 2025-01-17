@@ -1,7 +1,149 @@
 Usage
 =====
 
-This section explains how to use the ggnn library and the ggnn module.
+This section explains how to use the ggnn library and the ggnn module. The ggnn library is written for easy use in Python, but of course using it from C++ is also explained here.
+
+
+Usage in Python
+---------------
+
+You can find all the code from this tutorial and additional example code in the :file:`examples/` folder of the GGNN repository.
+
+Standard Usage
+~~~~~~~~~~~~~~
+
+After installing the ggnn module, we have to import it and create the data. Additionally we tell the ggnn module to print the deatiled logs into the console (optional):
+
+.. code:: python
+
+   #! /usr/bin/python3
+   
+   import ggnn
+   import torch
+   
+   #get detailed logs (optional)
+   ggnn.set_log_level(4)
+   
+   #initialize data
+   base = torch.rand((100000, 128), dtype=torch.float32, device='cpu')
+   query = torch.rand((10000, 128), dtype=torch.float32, device='cpu')
+
+
+Then we need to create an instance of the GGNN class and build the graph. ``build(K_Build, tau_build)`` takes ``K_Build`` and ``tau_build`` as parameters. Typically, ``0 < tau_build < 2``. However, it is recommended to experiment with these parameters. See the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information on parameters and some examples:
+
+.. code:: python
+
+   #initialize ggnn
+   my_ggnn = ggnn.GGNN()
+   my_ggnn.set_base(base)
+   
+   #build the graph
+   my_ggnn.build(64, 0.9)
+
+Now, we can query the graph with the created queries and perform a bruteforce query to compare with:
+
+.. code:: python
+
+   #set k_query
+   k_query: int = 10
+
+   #run query
+   indices, dists = my_ggnn.query(query, k_query, 0.9, 1000)
+   
+   #run bruteforce query to get a groundtruth and evaluate the results of the query
+   indices_eval, dists_eval = my_ggnn.bf_query(query, k_query)
+   evaluator = ggnn.Evaluator(base, query, indices_eval, k_query)
+   print(evaluator.evaluate_results(indices))
+
+``query(query, k_query, tau_query, max_iterations)`` takes ``query`` (the data to query for), ``k_query`` (the number of neighbors to search), ``tau_query`` and ``max_iterations``. To fine-tune performance for your application you should play around with these parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples. The ``Evaluator`` class holds the necessary information for evluating the results of the query. the function ``evaluate_results(indices)`` compares the results of the query (``indices``) with the results from the bruteforce query (``indices_eval``). 
+
+We can also look at the indices of the *k*-nearest neighbors for the first five queries and their squared euclidean distance:
+
+.. code:: python
+
+   print('indices:', indices[:5], '\n dists:',  dists[:5], '\n')
+
+Usage with Data on the GPU
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This  works just like with data on the host, you just have to change the device of your torch tensors to ``device='cuda'`` and potentially add the respective gpu index. Additionally you can tell ggnn to return the result of the *k*-nearest neighbor search on the GPU with ``my_ggnn.set_return_results_on_gpu(True)``.
+
+.. code:: python
+
+   #initialize data
+   base = torch.rand((100000, 128), dtype=torch.float32, device='cuda')
+   query = torch.rand((10000, 128), dtype=torch.float32, device='cuda')
+
+   #initialize ggnn
+   my_ggnn = ggnn.GGNN()
+   my_ggnn.set_base(base)
+   my_ggnn.set_return_results_on_gpu(True)
+
+.. note::
+   The data has to be given on the same GPU as the search should be performed on, if your data is sitting on a different GPU you have to move it first.
+
+
+Usage Multi-GPU
+~~~~~~~~~~~~~~~
+
+For multi-gpu mode it is required to use ``set_shard_size(N_shard)``, where ``N_shard`` describes the number of base vectors that should be processed at once. Also the GPU ids have to be provided via ``set_gpus()``, which expects a list of GPU ids.
+
+.. code:: python
+   
+   #! /usr/bin/python3
+   
+   import ggnn
+   import torch
+   
+   k_query: int = 10
+   
+   #initialize data
+   base = torch.rand((1000000, 128), dtype=torch.float32, device='cpu')
+   query = torch.rand((10000, 128), dtype=torch.float32, device='cpu')
+   
+   #initialize ggnn and prepare multi gpu
+   my_ggnn = ggnn.GGNN()
+   my_ggnn.set_base(base)
+   my_ggnn.set_shard_size(125000)
+   my_ggnn.set_gpus([0,1])
+   
+   #build the graph
+   my_ggnn.build(64, 0.9)
+   
+   #run query
+   indices, dists = my_ggnn.query(query, k_query, 0.9, 1000)
+   
+   print('indices:', indices[:5], '\n squared dists:',  dists[:5], '\n')
+
+.. note::
+   The ``Evaluator`` class is only available in single-gpu mode.
+
+Usage of Datasets (e.g. SIFT1M)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want to query datasets in :file:`.bvecs` or :file:`.fvecs` format, you can use the ``.load('path to file')`` function to load the dataset. If a groundtruth is provided you can pass it to the ``Evaluator``.
+
+.. code:: python
+
+   #! /usr/bin/python3
+   
+   import ggnn
+   
+   base = ggnn.FloatDataset.load('/graphics/scratch/datasets/ANN_datasets/SIFT1M/sift/sift_base.fvecs')
+   query = ggnn.FloatDataset.load('/graphics/scratch/datasets/ANN_datasets/SIFT1M/sift/sift_query.fvecs')
+   gt = ggnn.IntDataset.load('/graphics/scratch/datasets/ANN_datasets/SIFT1M/sift/sift_groundtruth.ivecs')
+   
+   k_query: int = 10
+   
+   evaluator = ggnn.Evaluator(base, query, gt, k_query)
+   
+   my_ggnn = ggnn.GGNN()
+   my_ggnn.set_base(base)
+   my_ggnn.build(24, 0.5)
+   
+   indices, dists = my_ggnn.query(query, k_query, 0.64, 400)
+   print(evaluator.evaluate_results(indices))
+
 
 Usage in C++
 ------------
@@ -265,110 +407,3 @@ Usage Multi-GPU
 
 
 
-
-Usage in Python
----------------
-
-You can find all the code from this tutorial and additional example code in the :file:`examples/` folder of the GGNN repository.
-
-Standard Usage
-~~~~~~~~~~~~~~
-
-First, we have to import the ggnn module and create the data. Additionally we tell the ggnn module to print the deatiled logs into the console (optional):
-
-.. code:: python
-
-   #! /usr/bin/python3
-   
-   import ggnn
-   import torch
-   
-   #get detailed logs (optional)
-   ggnn.set_log_level(4)
-   
-   #initialize data
-   base = torch.rand((100000, 128), dtype=torch.float32, device='cpu')
-   query = torch.rand((10000, 128), dtype=torch.float32, device='cpu')
-
-
-Then, we have to create an instance of the GGNN class and build the graph. ``build(K_Build, tau_build)`` requires ``K_Build`` and ``tau_build`` as parameters. Typically, ``0 < tau_build < 2``. However, we recommend experimenting with those parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples:
-
-.. code:: python
-
-   #initialize ggnn
-   my_ggnn = ggnn.GGNN()
-   my_ggnn.set_base(base)
-   
-   #build the graph
-   my_ggnn.build(64, 0.9)
-
-Now, we can query the graph with the created queries and perform a bruteforce query to compare with:
-
-.. code:: python
-
-   #set k_query
-   k_query: int = 10
-
-   #run query
-   indices, dists = my_ggnn.query(query, k_query, 0.9, 1000)
-   
-   #run bruteforce query to get a groundtruth and evaluate the results of the query
-   indices_eval, dists_eval = my_ggnn.bf_query(query, k_query)
-   evaluator = ggnn.Evaluator(base, query, indices_eval, k_query)
-   print(evaluator.evaluate_results(indices))
-
-``query(query, k_query, tau_query, max_iterations)`` requires ``query`` (data to query for), ``k_query`` (the number of neighbors to search), ``tau_query`` and ``max_iterations``. To finetune performance for your usecase you should play around with those parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples. The ``Evaluator`` class holds the necessary information for evluating the results of the query. the function ``evaluate_results(indices)`` compares the results of the query (``indices``) with the results from the bruteforce query (``indices_eval``). 
-
-We can also look at the indices of the *k*-nearest neighbors for the first five queries and their squared euclidean distance:
-
-.. code:: python
-
-   print('indices:', indices[:5], '\n dists:',  dists[:5], '\n')
-
-Usage with Data on the GPU
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This  works just like with data on the host, you just have to change the device of your torch tensors to ``device='cuda'`` and potentially add the respective gpu index. 
-
-.. code:: python
-
-   #initialize data
-   base = torch.rand((100000, 128), dtype=torch.float32, device='cuda')
-   query = torch.rand((10000, 128), dtype=torch.float32, device='cuda')
-
-
-Usage Multi-GPU
-~~~~~~~~~~~~~~~
-
-For multi-gpu mode it is required to use ``set_shard_size(N_shard)``, where ``num_base_vectors = N_shard * num gpus`` has to be evenly divisible. Also the GPU ids have to be provided via ``set_gpus()``, which expects an ndarray of GPU ids.
-
-.. code:: python
-
-   #! /usr/bin/python3
-
-   import ggnn
-   import torch
-   import numpy as np
-   
-   k_query: int = 10
-   
-   #initialize data
-   base = torch.rand((1000000, 128), dtype=torch.float32, device='cuda')
-   query = torch.rand((10000, 128), dtype=torch.float32, device='cuda')
-   
-   #initialize ggnn and prepare multi gpu
-   my_ggnn = ggnn.GGNN()
-   my_ggnn.set_base(base)
-   my_ggnn.set_shard_size(500000)
-   my_ggnn.set_gpus(np.array([0,1], dtype=int32))
-   
-   #build the graph
-   my_ggnn.build(64, 0.9)
-   
-   #run query
-   indices, dists = my_ggnn.query(query, k_query, 0.9, 1000)
-   
-   print('indices:', indices[:5], '\n dists:',  dists[:5], '\n')
-
-.. note::
-   The ``Evaluator`` class is only available in single-gpu mode.

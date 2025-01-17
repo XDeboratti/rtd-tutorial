@@ -31,5 +31,5 @@ The ggnn library supports...
 
 .. caution::
 
-We do not recommended to search for ``6000`` neighbors, the recommended range is ``[1, 1000]``.
+We do not recommended to search for :math:`k = 6000` neighbors, the recommended range is :math:`k \in [1, 1000]`.
 

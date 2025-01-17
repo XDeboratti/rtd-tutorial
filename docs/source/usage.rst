@@ -83,7 +83,7 @@ After evaluating the example program prints the indices of the *k*-nearest neigh
 Usage with Data on the GPU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This  works just like with data on the host, you just have to change the device of your torch tensors to ``device='cuda'`` and potentially add the respective gpu index. Additionally you can tell ggnn to return the result of the *k*-nearest neighbor search on the GPU with ``my_ggnn.set_return_results_on_gpu(True)``.
+This works just like with data on the host, but the device of the torch tensors must be set to ``device='cuda'`` and possibly the respective gpu index must be added. Additionally, ggnn can return the result of the *k*-nearest neighbor search on the GPU with ``my_ggnn.set_return_results_on_gpu(True)``. If not set, the results will be on the host.
 
 .. code:: python
 
@@ -97,7 +97,7 @@ This  works just like with data on the host, you just have to change the device 
    my_ggnn.set_return_results_on_gpu(True)
 
 .. note::
-   The data has to be given on the same GPU as the search should be performed on, if your data is sitting on a different GPU you have to move it first.
+   The data has to be given on the same GPU as the search should be performed on, if the data is sitting on a different GPU it needs to be moved first.
 
 
 Usage Multi-GPU

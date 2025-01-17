@@ -7,7 +7,7 @@ This section explains how to use the ggnn module and the ggnn library. The ggnn 
 Usage in Python
 ---------------
 
-The code from this tutorial and additional examples can be found in the :file:`ggnn/examples/ggnn_pytorch.py` file of the GGNN repository.
+The code from this tutorial and additional examples can be found in the :file:`ggnn/examples/python/ggnn_pytorch.py` file of the GGNN repository.
 
 Standard Usage
 ~~~~~~~~~~~~~~
@@ -41,7 +41,7 @@ The next step is to create an instance of the GGNN class from the ggnn module. T
    #build the graph
    my_ggnn.build(k_build=64, tau_build=0.9, measure=ggnn.DistanceMeasure.Euclidean)
 
-The parameters of the ``build(k_build, tau_build, measure)`` fuction need some explanation. ``k_build`` describes the number of outgoing edges per node in the graph, the larger ``k_build`` the longer the build time and the query. ``tau_build`` influences the stopping criterion during the creation of the graph, the larger the ``tau_build``, the longer the build time. Typically, :math:`0 < tau\_build < 2` is enough to get good results during search. 
+The parameters of the ``build(k_build, tau_build, measure)`` fuction need some explanation. ``k_build >= 2`` describes the number of outgoing edges per node in the graph, the larger ``k_build`` the longer the build time and the query. ``tau_build`` influences the stopping criterion during the creation of the graph, the larger the ``tau_build``, the longer the build time. Typically, :math:`0 < tau\_build < 2` is enough to get good results during search. 
 It is recommended to experiment with these parameters to get the best possible trade-off between build time and accuracy out of the search. See the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`search parameters <Search_Parameters>` section for more information on parameters and some examples.
 ``measure`` is the distance measure to compare the distances of the vectors. The ggnn module supports cosine and euclidean (L2) distance, euclidean distance is the default, so passing this parameter is optional.
 
@@ -169,12 +169,12 @@ If the data is provided in :file:`.bvecs` or :file:`.fvecs` format, as for examp
 Usage in C++
 ------------
 
+You can find all the code from this tutorial and additional example files in the :file:`examples/cpp-and-cuda/` folder of the GGNN repository.
+
 Standard Usage
 ~~~~~~~~~~~~~~
 
-You can find all the code from this tutorial and additional example files in the :file:`examples/` folder of the GGNN repository.
-
-Before using ggnn, we need to include ``ggnn/base/ggnn.cuh`` from the ggnn library. The header files from the standard library are only for demonstrtaing purposes and are not required for using the library. Then, some data to search in and some data to search the *k*-nearest neighbors for is needed. Instead of a ``std:array`` you can also use a ``std::vector``:
+Before using ggnn, the ``ggnn/base/ggnn.cuh`` header has to be included from the ggnn library. The header files from the standard library are only for demonstrtaing purposes and are not required for using the library. Then, some data to search in and some data to search the *k*-nearest neighbors for is needed. Instead of a ``std:array`` you can also use a ``std::vector``:
 
 .. code:: c++
 
@@ -206,7 +206,7 @@ Before using ggnn, we need to include ``ggnn/base/ggnn.cuh`` from the ggnn libra
       for (float& x : query_data)
          x = uniform(prng);
 
-Then, we  have to initialize a ggnn instance and the datasets:
+Then,  a ggnn instance and the datasets can be initialized:
 
 .. code:: c++
 
@@ -214,7 +214,7 @@ Then, we  have to initialize a ggnn instance and the datasets:
        //
        /// data type for addressing points
        using KeyT = int32_t;
-       /// data type of the dataset (char, float)
+       /// data type of the dataset (uint8_t, float)
        using BaseT = float;
        /// data type of computed distances
        using ValueT = float;
@@ -242,10 +242,29 @@ Now, ggnn is ready to be used:
 
        //buid the kNN graph
        ggnn.build(24, 0.5);
+
+The parameters of the ``build(const uint32_t KBuild, const float tau_build, const uint32_t refinement_iterations, const DistanceMeasure measure);`` fuction need some explanation. ``KBuild >= 2`` describes the number of outgoing edges per node in the graph, the larger ``KBuild`` the longer the build time and the query. ``tau_build`` influences the stopping criterion during the creation of the graph, the larger the ``tau_build``, the longer the build time. Typically, :math:`0 < tau\_build < 2` is enough to get good results during search. 
+It is recommended to experiment with these parameters to get the best possible trade-off between build time and accuracy out of the search. See the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`search parameters <Search_Parameters>` section for more information on parameters and some examples.
+``refinement_iterations`` is the number of times the refinement algorithm is executed. It was shown empirically that 2 refinement iterations are sufficient to obtain a well connected graph.
+``DistanceMeasure`` is the distance measure to compare the distances of the vectors. The ggnn module supports cosine and euclidean (L2) distance, euclidean distance is the default, so passing this parameter is optional. Cosine distance can be passed as parameter ``Cosine`` or by declaring a variable of type ``ggnn::DistanceMeasure`` before.
+
+.. code:: c++
+
        //call query and store indices & squared distances
        const uint32_t KQuery = 10;
        const auto [indices, dists] = ggnn.query(query, KQuery, 0.5);
-   
+
+The parameters of ``query(const Dataset<BaseT>& query, const uint32_t KQuery, const float tau_query, const uint32_t max_iterations, const DistanceMeasure measure)`` are:
+
+- ``query`` are all the vectors, to search the *k*-NN for.
+- ``KQuery`` tells the search algorithm how many neighbors it should return per query vector. Generally, the higher ``KQuery``, the longer the search. The ggnn module supports up to 6000 neighbors, but it is recommended to search only for 1-1000 neighbors.
+- ``tau_query`` and ``max_iterations`` determine the stopping criterion. For both parameters it holds that the larger the parameter, the longer the search. Typically, :math:`0 < tau\_query < 2` and :math:`0 < max\_iterations < 2000` is enough to get good results during search. For ``max_iterations`` the default is set to 400.
+- ``measure`` is the distance measure that is used to compute the distances between vectors. ``Euclidean`` is the default, so this parameter is optional. To set cosine similarity you can pass ``Cosine`` as parameter. 
+
+The example program prints the indices and squared euclidean distances of the 10 nearest neighbors of the first query:
+
+.. code:: c++
+
        //print the results for the first query
        std::cout << "Result for the first query verctor: \n";
        for(uint32_t i=0; i < KQuery; i++){
@@ -258,7 +277,6 @@ Now, ggnn is ready to be used:
       return 0;
    }
 
-``ggnn.build(KBuild, tau_build)`` builds the kNN graph. ``KBuild`` is typically ``24`` and ``tau_build`` is typically ``0 < tau < 2``. In most cases lower numbers are sufficient. ``ggnn.query(query, KQuery, tau_query)`` executes the search. ``query`` is the data to search the *k*-nearest neighbors for. ``KQuery > 0`` can be chosen freely, depending on your needs. ``tau_query`` is again typically ``0 < tau < 2``. However, to finetune performance for your usecase you should play around with those parameters. Refer to the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information about parameters and some examples.
 
 Usage with Data on the GPU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

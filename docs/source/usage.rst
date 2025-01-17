@@ -364,8 +364,7 @@ Now, ggnn is usable:
 Usage Multi-GPU
 ~~~~~~~~~~~~~~~
 
-To work on multiple GPUs, we need to pass a ``std::vector<int>`` of GPU ids. Additionally, we need to set ``shard_size``. 
-If we use multiple gpus, a gpu deals with one part of the dataset at once and the parts are being swapped out. Therefore, the size of the base dataset has to be evenly divisible by ``shard_size``. The code could look as follows:
+To work on multiple GPUs, the method ggnn.setGPUs(const std::span<const int>& gpu_ids) has to be used to tell the instance of the ggnn class which GPUs to use. Additionally, ``ggnn.setShardSize(const uint32_t N_shard)`` needs to tell the ggnn instance how large each shard should be. A gpu deals with one part of the dataset (shard) at once and the parts are being swapped out. Therefore, the size of the base dataset has to be evenly divisible by ``shard_size``. The code could look as follows:
 
 .. code:: c++
 
@@ -385,6 +384,9 @@ If we use multiple gpus, a gpu deals with one part of the dataset at once and th
    const uint32_t shard_size = 1000000
    ggnn.setGPUs(gpus);
    ggnn.setShardSize(shard_size);
+
+   //buid the kNN graph
+   ggnn.build(24, 0.5);
 
 
 Usage Datasets (e.g. SIFT1M)
@@ -462,7 +464,7 @@ We can also query for benchmark datasets like `SIFT1M, SIFT1B,...<http://corpus-
      CHECK_GE(FLAGS_refinement_iterations, 0)
          << "The number of refinement iterations has to be non-negative.";
 
-Then, we configure the data types we need, read the distance measure and the gpus. For SIFT1B for example, the ``using BaseT = float;`` has to be replaced by ``using BaseT = char;``: 
+Then, we configure the data types we need, read the distance measure and the gpus. For SIFT1B for example, the ``using BaseT = float;`` has to be replaced by ``using BaseT = uint8_t;`` or ``using BaseT = unsigned char;``: 
 
 .. code:: c++
 
@@ -470,7 +472,7 @@ Then, we configure the data types we need, read the distance measure and the gpu
      //
      /// data type for addressing points (needs to be able to represent N)
      using KeyT = int32_t;
-     /// data type of the dataset (e.g., char, int, float)
+     /// data type of the dataset (e.g., char, float)
      using BaseT = float;
      /// data type of computed distances
      using ValueT = float;

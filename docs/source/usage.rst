@@ -30,8 +30,8 @@ After installing the ggnn module, it needs to be imported and example data needs
    query = torch.rand((10000, 128), dtype=torch.float32, device='cpu')
 
 
-The 
-Then we need to create an instance of the GGNN class and build the graph. ``build(K_Build, tau_build)`` takes ``K_Build`` and ``tau_build`` as parameters. Typically, ``0 < tau_build < 2``. However, it is recommended to experiment with these parameters. See the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information on parameters and some examples:
+The next step is to create an instance of the GGNN class from the ggnn module. The GGNN class needs the base data (``my_ggnn.set_base(base)``) and can build the graph. The parameters of the ``build(k_build, tau_build)`` fuction need some explanation. ``k_build`` describes the number of outgoing edges per node in the graph, the larger ``k_build`` the longer the build time and the query. ``tau_build`` influences the stopping criterion during the creation of the graph, the larger the ``tau_build``, the longer the build time. Typically, :math:`0 < tau_build < 2` is enough to get good results during search. 
+It is recommended to experiment with these parameters to get the best possible trade-off between build time and accuracy out of the search. See the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`search parameters <Search_Parameters>` section for more information on parameters and some examples:
 
 .. code:: python
 
@@ -40,7 +40,7 @@ Then we need to create an instance of the GGNN class and build the graph. ``buil
    my_ggnn.set_base(base)
    
    #build the graph
-   my_ggnn.build(64, 0.9)
+   my_ggnn.build(k_build=64, tau_build=0.9)
 
 Now, we can query the graph with the created queries and perform a bruteforce query to compare with:
 

@@ -325,7 +325,8 @@ Now, ggnn is usable:
 Usage Multi-GPU
 ~~~~~~~~~~~~~~~
 
-To work on multiple GPUs, we need to pass a ``std::vector<int>`` of GPU ids. Additionally, we need to set ``shard_size``. If we use multiple gpus, a gpu deals with one part of the dataset at once and the parts are being swapped out. Therefore, the size of the base dataset has to be evenly divisible by ``shard``size. The code could look as follows:
+To work on multiple GPUs, we need to pass a ``std::vector<int>`` of GPU ids. Additionally, we need to set ``shard_size``. 
+If we use multiple gpus, a gpu deals with one part of the dataset at once and the parts are being swapped out. Therefore, the size of the base dataset has to be evenly divisible by ``shard_size``. The code could look as follows:
 
 .. code:: c++
 

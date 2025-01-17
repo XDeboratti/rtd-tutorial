@@ -142,7 +142,7 @@ For multi-gpu mode it is required to use ``set_shard_size(n_shard)``, where ``n_
 Usage of Datasets (e.g. SIFT1M)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you want to query datasets in :file:`.bvecs` or :file:`.fvecs` format, you can use the ``.load('path to file')`` function to load the dataset. If a groundtruth is provided you can pass it to the ``Evaluator``.
+If the data is provided in :file:`.bvecs` or :file:`.fvecs` format, as for example the SIFT1M dataset, the dataset can be loaded using the ``.load('path to file')`` function. If a groundtruth is provided it can be passed to the ``Evaluator``.
 
 .. code:: python
 
@@ -156,13 +156,13 @@ If you want to query datasets in :file:`.bvecs` or :file:`.fvecs` format, you ca
    
    k_query: int = 10
    
-   evaluator = ggnn.Evaluator(base, query, gt, k_query)
+   evaluator = ggnn.Evaluator(base, query, gt=gt, k_query=k_query)
    
    my_ggnn = ggnn.GGNN()
    my_ggnn.set_base(base)
-   my_ggnn.build(24, 0.5)
+   my_ggnn.build(k_build=24, tau_build=0.5)
    
-   indices, dists = my_ggnn.query(query, k_query, 0.64, 400)
+   indices, dists = my_ggnn.query(query, k_query, tau_query=0.64, max_iterations=400)
    print(evaluator.evaluate_results(indices))
 
 

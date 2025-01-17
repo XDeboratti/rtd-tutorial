@@ -31,5 +31,5 @@ The ggnn library supports...
 
 .. caution::
 
-   It is not recommended to search for ``k_query = 6000`` neighbors, we recommend to search for ``k_query <= 1000``.
+We do not recommended to search for ``6000`` neighbors, the recommended range is ``[1, 1000]``.
 

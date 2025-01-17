@@ -50,7 +50,7 @@ To install ggnn, first the repository has to be cloned:
 
    git clone https://github.com/cgtuebingen/ggnn.git
 
-The easiest way to install if from the folder containing the repository:
+The easiest way to install ggnn is from the folder containing the repository:
 
 .. code-block:: console
 
@@ -70,19 +70,19 @@ The ggnn library can then be installed using the package manager pip:
 Install GGNN C++ Library
 ------------------------
 
-To use ggnn, first clone the repository:
+To install ggnn, first the repository has to be cloned:
 
 .. code-block:: console
 
    git clone https://github.com/cgtuebingen/ggnn.git
 
-Navigate to the folder containing the repository:
+The easiest way to install ggnn is from the folder containing the repository:
 
 .. code-block:: console
 
    cd ggnn
 
-Build the library:
+The ggnn library can then be built:
 
 .. code-block:: console
 

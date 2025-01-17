@@ -142,7 +142,7 @@ For multi-gpu mode it is required to use ``set_shard_size(n_shard)``, where ``n_
 Usage of Datasets (e.g. SIFT1M)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the data is provided in :file:`.bvecs` or :file:`.fvecs` format, as for example the SIFT1M dataset, the dataset can be loaded using the ``.load('path to file')`` function. If a groundtruth is provided it can be passed to the ``Evaluator``.
+If the data is provided in :file:`.bvecs` or :file:`.fvecs` format, as for example the SIFT1M dataset, the dataset can be loaded using the ``.load('path to file')`` function. Besides a ``FloatDataset``, the ggnn module can also load a base and query as ``UCharDataset`` (unsigned char). If a groundtruth is provided it can be passed to the ``Evaluator`` directly.
 
 .. code:: python
 

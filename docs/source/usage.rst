@@ -61,7 +61,8 @@ Now, the approximate nearest neighbor search can be performed. In this example, 
    print(evaluator.evaluate_results(indices))
 
 First, the parameters of ``query(query, k_query, tau_query, max_iterations, measure)`` are explained:
-- ``query`` are all the vectors, to search the *k*NN for.
+
+- ``query`` are all the vectors, to search the *k*-NN for.
 - ``k_query`` tells the search algorithm how many neighbors it should return per query vector. Generally, the higher ``k_query``, the longer the search. The ggnn module supports up to 6000 neighbors, but it is recommended to search only for 1-1000 neighbors.
 - ``tau_query`` and ``max_iterations`` determine the stopping criterion. For both parameters it holds that the larger the parameter, the longer the search. Typically, :math:`0 < tau\_query < 2` and :math:`0 < max\_iterations < 2000` is enough to get good results during search.
 - ``measure`` is the distance measure that is used to compute the distances between vectors. ``Euclidean`` is the default, so this parameter is optional. To set cosine similarity you can pass ``measure=ggnn.DistanceMeasure.Cosine`` as parameter. 

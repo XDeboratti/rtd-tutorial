@@ -1,18 +1,18 @@
 Usage
 =====
 
-This section explains how to use the ggnn library and the ggnn module. The ggnn library is written for easy use in Python, but of course using it from C++ is also explained here.
+This section explains how to use the ggnn module and the ggnn library. The ggnn library is written for easy use in Python, but of course using it from C++ is also explained here.
 
 
 Usage in Python
 ---------------
 
-You can find all the code from this tutorial and additional examples in the :file:`ggnn/examples/ggnn_pytorch.py` file of the GGNN repository.
+The code from this tutorial and additional examples can be found in the :file:`ggnn/examples/ggnn_pytorch.py` file of the GGNN repository.
 
 Standard Usage
 ~~~~~~~~~~~~~~
 
-After installing the ggnn module, we have to import it and create the data. Additionally we tell the ggnn module to print the deatiled logs into the console (optional):
+After installing the ggnn module, it needs to be imported and example data needs to be created. The dimensionality of the data has to be :math:`d >= 1`. ``ggnn.set_log_level(4)`` prints log information into the console during the execution of the algorithm, the higher the log level, the more information, 0 is the lowest log level and if no log level is set, the log level is automatically 0:
 
 .. code:: python
 
@@ -21,14 +21,16 @@ After installing the ggnn module, we have to import it and create the data. Addi
    import ggnn
    import torch
    
-   #get detailed logs (optional)
+   #get detailed logs
    ggnn.set_log_level(4)
    
-   #initialize data
+   
+   #create data
    base = torch.rand((100000, 128), dtype=torch.float32, device='cpu')
    query = torch.rand((10000, 128), dtype=torch.float32, device='cpu')
 
 
+The 
 Then we need to create an instance of the GGNN class and build the graph. ``build(K_Build, tau_build)`` takes ``K_Build`` and ``tau_build`` as parameters. Typically, ``0 < tau_build < 2``. However, it is recommended to experiment with these parameters. See the paper `GGNN: Graph-based GPU Nearest Neighbor Search <https://arxiv.org/abs/1912.01059>`_ and the :ref:`Search Parameters <Search_Parameters>` section for more information on parameters and some examples:
 
 .. code:: python

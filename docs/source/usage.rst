@@ -153,7 +153,7 @@ Standard Usage
 
 You can find all the code from this tutorial and additional example files in the :file:`examples/` folder of the GGNN repository.
 
-Before using ggnn, we need to include ``ggnn/base/ggnn.cuh`` from the ggnn library. The header files from the standard library are only for demonstrtaing purposes and are not required for using the library. Then, some data to search in and some data to search the *k*-nearest neighbors for is needed:
+Before using ggnn, we need to include ``ggnn/base/ggnn.cuh`` from the ggnn library. The header files from the standard library are only for demonstrtaing purposes and are not required for using the library. Then, some data to search in and some data to search the *k*-nearest neighbors for is needed. Instead of a ``std:array`` you can also use a ``std::vector``:
 
 .. code:: c++
 
@@ -325,7 +325,7 @@ Now, ggnn is usable:
 Usage Datasets (e.g. SIFT1M)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We can also query for benchmark datasets like `SIFT1M, SIFT1B,...<http://corpus-texmex.irisa.fr/>`. We just need to include some extra headers for parsing information from the command line. Additionally ``getTotalSystemMemory()`` helps to manage the memory of our machine properly, especially if we deal with large datasets.
+We can also query for benchmark datasets like `SIFT1M, SIFT1B,...<http://corpus-texmex.irisa.fr/>` in :file:`.bvecs` or :file:`.fvecs` format. We just need to include some extra headers for parsing information from the command line. Additionally ``getTotalSystemMemory()`` helps to manage the memory of our machine properly, especially if we deal with large datasets.
 
 .. code:: c++
 

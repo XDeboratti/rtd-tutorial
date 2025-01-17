@@ -26,9 +26,10 @@ The ggnn library supports...
 
 - arbitrarily large datasets, the only limit is your hardware here.
 - data with up to 4096 dimensions
-- building graphs with up to 512 nearest neighbors
+- building graphs with up to 512 edges per node
 - searching for up to 6000 nearest neighbors
 
 ..caution::
+
    It is not recommended to search for ``k_query = 6000`` neighbors, we recommend to search for ``k_query <= 1000``.
 

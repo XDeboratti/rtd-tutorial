@@ -67,7 +67,7 @@ The ggnn library can then be installed using the package manager pip:
    Automatic installation via ``pip install ggnn`` is under development.
 
 
-Install GGNN C++ Library
+Install ggnn C++ Library
 ------------------------
 
 To install ggnn, first the repository has to be cloned:

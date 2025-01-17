@@ -7,7 +7,7 @@ This section explains how to use the ggnn library and the ggnn module. The ggnn 
 Usage in Python
 ---------------
 
-You can find all the code from this tutorial and additional example code in the :file:`examples/` folder of the GGNN repository.
+You can find all the code from this tutorial and additional examples in the :file:`ggnn/examples/ggnn_pytorch.py` file of the GGNN repository.
 
 Standard Usage
 ~~~~~~~~~~~~~~

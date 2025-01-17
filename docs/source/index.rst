@@ -28,6 +28,7 @@ The ggnn library supports...
 - data with up to 4096 dimensions
 - building graphs with up to 512 edges per node
 - searching for up to 6000 nearest neighbors
+- two distance measures: cosine and euclidean (L2) distance
 
 .. caution::
 

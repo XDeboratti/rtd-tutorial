@@ -552,7 +552,7 @@ The graph is loaded if it was built before, else it build and potentially stored
     }
    }
 
-Fro evaluation of the algorithm, a groundtruth is needed, so it is loaded or if there is not groundtruth file the groundtruth is computed:
+For evaluation of the algorithm, a groundtruth is needed, so it is loaded or if there is not groundtruth file the groundtruth is computed:
 
 
 .. code:: c++

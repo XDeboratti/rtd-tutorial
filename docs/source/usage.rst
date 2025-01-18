@@ -392,7 +392,13 @@ To work on multiple GPUs, the method ggnn.setGPUs(const std::span<const int>& gp
 Usage Datasets (e.g. SIFT1M)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We can also query for benchmark datasets like `SIFT1M, SIFT1B,...<http://corpus-texmex.irisa.fr/>` in :file:`.bvecs` or :file:`.fvecs` format. We just need to include some extra headers for parsing information from the command line. Additionally ``getTotalSystemMemory()`` helps to manage the memory of our machine properly, especially if we deal with large datasets.
+The library also provides functionality to query for benchmark datasets like `SIFT1M, SIFT1B,...<http://corpus-texmex.irisa.fr/>` in :file:`.bvecs` or :file:`.fvecs` format. Example files for usage of the SIFT1M and SIFT1B dataset can be found in the :file:`examples/cpp-and-cuda/` folder. The files can also be used for other datasets but the parameters have to be adjusted according to the :ref:`search parameters <Search_Parameters>` section. The program can be run as follows
+
+.. code::
+
+   ./build/sift1m --base ./path-to-dataset/sift_base.fvecs --query /path-to-dataset/sift_query.fvecs --gt /path-to-dataset/sift_groundtruth.ivecs --graph_dir ./ --tau 0.5 --refinement_iterations 2 --k_build 24 --k_query 10 --measure euclidean --shard_size 0 --subset 0 --gpu_ids 0 --grid_search false
+
+We just need to include some extra headers for parsing information from the command line. Additionally ``getTotalSystemMemory()`` helps to manage the memory of our machine properly, especially if we deal with large datasets.
 
 .. code:: c++
 

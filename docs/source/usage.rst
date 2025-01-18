@@ -392,7 +392,7 @@ To work on multiple GPUs, the method ggnn.setGPUs(const std::span<const int>& gp
 Usage Datasets (e.g. SIFT1M)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The library also provides functionality to query for benchmark datasets such as `SIFT1M, SIFT1B,...<http://corpus-texmex.irisa.fr/>` in :file:`.bvecs` or :file:`.fvecs` format. Example files for using of the SIFT1M and SIFT1B datasets can be found in the :file:`examples/cpp-and-cuda/` folder. The files can also be used for other datasets, but the parameters have to be adjusted according to the :ref:`search parameters <Search_Parameters>` section. The program can be run as follows:
+The library also provides functionality to query for benchmark datasets such as `SIFT1M, SIFT1B,...<http://corpus-texmex.irisa.fr/>`_ in :file:`.bvecs` or :file:`.fvecs` format. Example files for using of the SIFT1M and SIFT1B datasets can be found in the :file:`examples/cpp-and-cuda/` folder. The files can also be used for other datasets, but the parameters have to be adjusted according to the :ref:`search parameters <Search_Parameters>` section. The program can be run as follows:
 
 .. code::
 

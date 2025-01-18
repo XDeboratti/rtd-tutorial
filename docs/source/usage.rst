@@ -392,13 +392,17 @@ To work on multiple GPUs, the method ggnn.setGPUs(const std::span<const int>& gp
 Usage Datasets (e.g. SIFT1M)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The library also provides functionality to query for benchmark datasets like `SIFT1M, SIFT1B,...<http://corpus-texmex.irisa.fr/>` in :file:`.bvecs` or :file:`.fvecs` format. Example files for usage of the SIFT1M and SIFT1B dataset can be found in the :file:`examples/cpp-and-cuda/` folder. The files can also be used for other datasets but the parameters have to be adjusted according to the :ref:`search parameters <Search_Parameters>` section. The program can be run as follows
+The library also provides functionality to query for benchmark datasets such as `SIFT1M, SIFT1B,...<http://corpus-texmex.irisa.fr/>` in :file:`.bvecs` or :file:`.fvecs` format. Example files for using of the SIFT1M and SIFT1B datasets can be found in the :file:`examples/cpp-and-cuda/` folder. The files can also be used for other datasets, but the parameters have to be adjusted according to the :ref:`search parameters <Search_Parameters>` section. The program can be run as follows:
 
 .. code::
 
    ./build/sift1m --base ./path-to-dataset/sift_base.fvecs --query /path-to-dataset/sift_query.fvecs --gt /path-to-dataset/sift_groundtruth.ivecs --graph_dir ./ --tau 0.5 --refinement_iterations 2 --k_build 24 --k_query 10 --measure euclidean --shard_size 0 --subset 0 --gpu_ids 0 --grid_search false
 
-We just need to include some extra headers for parsing information from the command line. Additionally ``getTotalSystemMemory()`` helps to manage the memory of our machine properly, especially if we deal with large datasets.
+The ``--graph_dir``, ``--tau``, ``--refinement_iterations``, ``--k_build``, ``--k_query``, ``--measure``, ``--subset`` and ``--grid_search`` flags are optional. The ``--grid_search`` flag is useful for finding the configuration that leads to 99% precision, measured in recall or consensus. The ``--subset`` flag describes the total number of base vectors and is useful if only a subset of the base vectors is to be searched. The ``--shard_size`` and ``--gpu_ids`` flags are optional and are only needed for multi-gpu execution. ``--shard_size`` describes the number of base vectors to process at once. The total number of base vectors must be evenly divisible by the shard size. ``--gpu_ids`` expects a comma-separated list of GPU indices e.g. ``--gpu_ids 0,1,2`` of the GPUs on which the query should be executed.
+
+In the following, the :file:`sift1m` program is explained in more detail, the :file:`sift1b` program works analogously.
+
+Some extra headers are included for parsing information from the command line. Additionally ``getTotalSystemMemory()`` helps to manage the memory of our machine properly.
 
 .. code:: c++
 
@@ -470,7 +474,7 @@ We just need to include some extra headers for parsing information from the comm
      CHECK_GE(FLAGS_refinement_iterations, 0)
          << "The number of refinement iterations has to be non-negative.";
 
-Then, we configure the data types we need, read the distance measure and the gpus. For SIFT1B for example, the ``using BaseT = float;`` has to be replaced by ``using BaseT = uint8_t;`` or ``using BaseT = unsigned char;``: 
+Then, the needed data types are configured for convenience, and the distance measure and the gpu_ids are read. For SIFT1B for example, the ``using BaseT = float;`` has to be replaced by ``using BaseT = uint8_t;`` or ``using BaseT = unsigned char;``: 
 
 .. code:: c++
 
@@ -509,7 +513,7 @@ Then, we configure the data types we need, read the distance measure and the gpu
        gpus.push_back(gpu_id);
      }
 
-Then, we can load the datasets:
+Then, the datasets are loaded:
 
 .. code:: c++
 
@@ -517,7 +521,7 @@ Then, we can load the datasets:
    Dataset<BaseT> base = Dataset<BaseT>::load(FLAGS_base, 0, FLAGS_subset ? FLAGS_subset : std::numeric_limits<uint32_t>::max(), true);
    Dataset<BaseT> query = Dataset<BaseT>::load(FLAGS_query, 0, std::numeric_limits<uint32_t>::max(), true);
 
-And can initialize ggnn:
+And a ggnn instance is created:
 
 .. code:: c++
 
@@ -532,7 +536,7 @@ And can initialize ggnn:
    ggnn.setWorkingDirectory(FLAGS_graph_dir);
    ggnn.setBaseReference(base);
 
-We load the graph if it was built before, else we build and store it:
+The graph is loaded if it was built before, else it build and potentially stored:
 
 .. code:: c++
    
@@ -548,7 +552,7 @@ We load the graph if it was built before, else we build and store it:
     }
    }
 
-We obtain the groundtruth:
+Fro evaluation of the algorithm, a groundtruth is needed, so it is loaded or if there is not groundtruth file the groundtruth is computed:
 
 
 .. code:: c++
@@ -567,8 +571,7 @@ We obtain the groundtruth:
    
    Evaluator eval {base, query, gt, FLAGS_k_query, measure};
 
-Finally, we can perform the query:
-
+Finally, the query is performed. If the ``--grid_search`` flag is set, the ``tau_query`` parameter is slowly increased. If not, just a few ``tau_queries`` are applied:
 
 .. code:: c++
    
